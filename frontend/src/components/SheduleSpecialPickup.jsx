@@ -25,7 +25,7 @@ const SpecialPickupForm = () => {
 
   // 💡 NEW HANDLER FOR DASHBOARD NAVIGATION
   const handleDashboardNavigation = () => {
-    navigate("/"); // Navigates to the root path
+    navigate("/Home"); // Navigates to the root path
   };
 
   // Handler for all input changes

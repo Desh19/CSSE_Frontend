@@ -7,10 +7,11 @@ import { NavLink } from 'react-router-dom';
 const Sidebar = () => { 
   const navItems = [
     // Map module names to their corresponding URL paths
-    { name: 'Dashboard', icon: '🏠', path: '/' }, // Root path for Dashboard/Home
-    { name: 'Services', icon: '🗂️', path: '/Sidebar' },
-    { name: 'Requests', icon: '📝', path: '/requests' },
-    { name: 'Billing', icon: '💵', path: '/billing' },
+    { name: 'Dashboard', icon: '🏠', path: '/Home' }, // Root path for Dashboard/Home
+    { name: 'Services', icon: '🗂️', path: '/Home' },
+    { name: 'Requests', icon: '📝', path: '/PickupRequestList' },
+    { name: 'Requests Approval', icon: '✅', path: '/RequestApproval' },
+    { name: 'Crew Assigned List', icon: '💵', path: '/CrewMemberAssignedList' },
     { name: 'Settings', icon: '⚙️', path: '/settings' },
   ];
 
