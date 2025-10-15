@@ -10,7 +10,9 @@ import SignInPage from './components/SignIn';
 import PickupRequestList from './components/PickupRequestList';
 import RequestApproval from './components/RequestApproval';
 import CrewMemberAssignedList from './components/CrewMemberAssignedList';
-
+import QrScanner from './components/QrScanner';
+import UserQRCode from './components/UserQRCode';
+import SchedulePickup from './components/SchedulePickup';
 function App() {
   // Get the current URL location object
   const location = useLocation();
@@ -19,9 +21,6 @@ function App() {
   const isSignUpPage = location.pathname === '/SignUp';
   const isSignInPage = location.pathname === '/SignIn';
 
-  // The main wrapper dynamically changes its class:
-  // - If it's the landing page, it takes up the full screen (w-screen h-screen).
-  // - Otherwise, it sets up the flexible sidebar layout (flex h-screen ...).
   return (
     <div className={(isLandingPage||isSignUpPage||isSignInPage) ? 'w-screen h-screen' : 'flex h-screen antialiased bg-gray-50'}>
       
@@ -47,7 +46,12 @@ function App() {
           {/* Note: /Sidebar route is unusual for a main content view, but kept as per original */}
           <Route path="/Sidebar" element={<Sidebar />} />
           {/* Catch-all route */}
-          <Route path="*" element={<Home />} /> 
+          <Route path="*" element={<Home />} />
+           <Route path="/qr" element={<QrScanner />} />
+           <Route path="/genQr" element={<UserQRCode />} />
+            <Route path="/shedulePickup" element={<SchedulePickup />} />
+           
+           
         </Routes>
       </div>
     </div>

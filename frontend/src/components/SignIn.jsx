@@ -1,236 +1,274 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { loginFunc } from "../services/api";
+// NOTE: I've removed `useNavigate` from react-router-dom as it's typically not available
+// in this sandbox environment. I've defined a simple, effective `Maps` helper
+// within the main component to simulate redirects.
 
-// --- API Endpoint Placeholder ---
-const LOGIN_API = '/api/auth/login'; 
+// --- API Endpoint ---
+const LOGIN_API = "http://localhost:8090/api/auth/login";
 
-// Reusable Input Field Component (Copied from SignUpPage for consistent styling)
-const FormInput = ({ label, type = 'text', name, required = true, placeholder, value, onChange }) => {
-    return (
-        <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={name}>
-                {label} {required && <span className="text-red-500">*</span>}
-            </label>
-            <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-green-500 transition duration-150"
-                id={name}
-                type={type}
-                name={name}
-                value={value}
-                onChange={onChange}
-                required={required}
-                placeholder={placeholder || label}
-            />
-        </div>
-    );
+// --- ROUTE MAPPING ---
+// Define the target paths for each user role after successful login
+const ROLE_DASHBOARD_MAP = {
+  Administrator: "/RequestApproval",
+  Resident: "/Home",
+  CollectionCrewMember: "/CrewMemberAssignedList",
 };
 
+// --- Reusable Input Field Component ---
+const FormInput = ({
+  label,
+  type = "text",
+  name,
+  required = true,
+  placeholder,
+  value,
+  onChange,
+}) => {
+  return (
+    <div className="mb-4">
+      <label
+        className="block text-gray-700 text-sm font-bold mb-2"
+        htmlFor={name}
+      >
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500 transition duration-150"
+        id={name}
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        placeholder={placeholder || label}
+      />
+    </div>
+  );
+};
+
+// Function to simulate navigation (adjust based on your environment)
+const simulateNavigation = (path) => {
+  console.log(`Simulating navigation to external path: ${path}`);
+  if (typeof window !== "undefined") {
+    // In a real application, you would use navigate(path) from react-router-dom here.
+    // For the sandbox, we'll assign to window.location to simulate a page change.
+    window.location.assign(path);
+  }
+};
 
 // --- MAIN SIGN IN COMPONENT ---
-const SignInFormContent = () => {
-    
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
+const SignInFormContent = ({ simulateNavigation }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    // Handle form submission (Sign In)
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        setMessage('');
+  // Handle form submission (Sign In)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
 
-        try {
-            // Basic Client-side Validation
-            if (!formData.email || !formData.password) {
-                throw new Error('Please enter both email and password.');
-            }
+    try {
+      // Basic Client-side Validation
+      if (!formData.email || !formData.password) {
+        throw new Error("Please enter both email and password.");
+      }
 
-            // 1. Send API Request
-            const payload = {
-                email: formData.email,
-                password: formData.password,
-            };
-            
-            // NOTE: In a real app, successful login usually returns a JWT token or user data.
-            const { data } = await axios.post(LOGIN_API, payload);
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+      };
 
-            // Use swal (SweetAlert) for success message
-            if (typeof window.swal === 'function') {
-                 window.swal({
-                    title: "Login Successful!",
-                    text: `Welcome back! Navigating to dashboard...`,
-                    icon: "success",
-                    button: "OK",
-                }).then(() => {
-                    // Navigate to a protected dashboard or home page
-                    navigate('/Home'); 
-                });
-            } else {
-                setMessage(`Login successful! Welcome back, ${data.name || 'User'}.`);
-                navigate('/Home');
-            }
-            
-            // Clear fields after successful submission
-            setFormData({ email: '', password: '' });
-            
-        } catch (err) {
-            const errMsg = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';
-            setError(errMsg);
-            // Use swal for error message
-            if (typeof window.swal === 'function') {
-                window.swal("Login Failed", errMsg, "error");
-            }
+      // 1. Send API Request - NOW USING THE FULL LOCALHOST URL
+      const response = await loginFunc(payload);
+      const data = response.data; 
 
-        } finally {
-            setLoading(false);
-        }
-    };
+      // 2. SUCCESS: Extract Role and Determine Target Path
+      const userRole = data.role;
+      const targetPath = ROLE_DASHBOARD_MAP[userRole] || "/default/home"; // Fallback path
 
+      // In a real app, you would save the token (data.token) and user data (data)
+      // to global state or local storage here.
+      localStorage.setItem("token", data.token);
 
-    // --- Render Component ---
-    return (
-        // Added flex flex-col to enable fixed footer layout
-        <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl h-full flex flex-col">
-            <div className="p-8 pb-0">
-                <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
-                    Sign In
-                </h2>
+      // 2. Save your basic identity (name, role, ID) to Local Storage
+      // This is used by the frontend to personalize the dashboard (e.g., "Welcome, [User Name]").
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          _id: data._id,
+          name: data.name,
+          email: data.email,
+          role: data.role,
+        })
+      );
+
+      // Use swal (SweetAlert) for success message
+      if (typeof window.swal === "function") {
+        window
+          .swal({
+            title: "Login Successful!",
+            text: `Welcome back, ${
+              data.name || "User"
+            }! You are logging in as a ${userRole}.`,
+            icon: "success",
+            button: "Proceed",
+          })
+          .then(() => {
+            // 3. Navigate to the role-specific page
+            simulateNavigation(targetPath);
+          });
+      } else {
+        setMessage(
+          `Login successful! Redirecting ${userRole} to ${targetPath}...`
+        );
+        simulateNavigation(targetPath);
+      }
+
+      // Clear fields after successful submission
+      setFormData({ email: "", password: "" });
+    } catch (err) {
+      const errMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Login failed. Please check your credentials.";
+      setError(errMsg);
+      // Use swal for error message
+      if (typeof window.swal === "function") {
+        window.swal("Login Failed", errMsg, "error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- Render Component ---
+  return (
+    <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl h-full flex flex-col">
+      <div className="p-8 pb-0">
+        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
+          Smart Waste Management Sign In
+        </h2>
+      </div>
+
+      {/* Status Messages */}
+      {(error || message) && (
+        <div className="px-8 pt-0 pb-4">
+          {error && (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm"
+              role="alert"
+            >
+              {error}
             </div>
-
-            {/* Status Messages */}
-            {(error || message) && (
-                <div className="px-8 pt-0 pb-4">
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm" role="alert">
-                            {error}
-                        </div>
-                    )}
-                    {message && (
-                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 text-sm" role="alert">
-                            {message}
-                        </div>
-                    )}
-                </div>
-            )}
-
-
-            {/* Dynamic Form Content (Scrollable Area) */}
-            <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto px-8">
-                
-                {/* Email and Password Fields */}
-                <div className="grid grid-cols-1 gap-x-4">
-                    <FormInput 
-                        label="Email Address" 
-                        name="email" 
-                        type="email" 
-                        value={formData.email} 
-                        onChange={handleChange} 
-                        placeholder="Enter your email"
-                    />
-                    <FormInput 
-                        label="Password" 
-                        name="password" 
-                        type="password" 
-                        value={formData.password} 
-                        onChange={handleChange} 
-                        placeholder="Enter your password"
-                    />
-                </div>
-                
-                {/* Optional: Link to Sign Up */}
-                <p className="text-sm text-center mt-6">
-                    Don't have an account? 
-                    <button 
-                        type="button" 
-                        onClick={() => navigate('/SignUp')} 
-                        className="text-green-600 hover:text-green-800 font-semibold ml-1 transition-colors"
-                        style={{ cursor: 'pointer' }}
-                    >
-                        Sign Up
-                    </button>
-                </p>
-
-            </form>
-            
-            {/* 3. Action Buttons (Fixed Footer Area) */}
-            <div className="px-8 pt-4 pb-8 bg-white border-t border-gray-100">
-                <div className="flex justify-between items-center">
-                    {/* Back Button */}
-                    <button
-                        type="button"
-                        onClick={() => navigate('/')}
-                        disabled={loading}
-                        className={`px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        Back
-                    </button>
-
-                    {/* Sign In Button */}
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        onClick={() => navigate('/Home')}
-                        className={`px-8 py-3 rounded-lg text-white font-bold shadow-md transition duration-300 ${
-                            loading
-                                ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50'
-                        }`}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        {loading ? 'Processing...' : 'Sign In'}
-                    </button>
-                </div>
+          )}
+          {message && (
+            <div
+              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 text-sm"
+              role="alert"
+            >
+              {message}
             </div>
+          )}
         </div>
-    );
+      )}
+
+      {/* Dynamic Form Content */}
+      <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto px-8">
+        {/* Email and Password Fields */}
+        <div className="grid grid-cols-1 gap-x-4">
+          <FormInput
+            label="Email Address"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+          />
+          <FormInput
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+          />
+        </div>
+
+        {/* Optional: Link to Sign Up */}
+        <p className="text-sm text-center mt-6">
+          Don't have an account?
+          <button
+            type="button"
+            onClick={() => simulateNavigation("/SignUpPage.jsx")}
+            className="text-indigo-600 hover:text-indigo-800 font-semibold ml-1 transition-colors"
+            style={{ cursor: "pointer" }}
+          >
+            Sign Up Now
+          </button>
+        </p>
+      </form>
+
+      {/* Action Buttons (Fixed Footer Area) */}
+      <div className="px-8 pt-4 pb-8 bg-white border-t border-gray-100">
+        <div className="flex justify-end items-center">
+          {/* Sign In Button */}
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`px-8 py-3 rounded-lg text-white font-bold shadow-md transition duration-300 ${
+              loading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50"
+            }`}
+            style={{ cursor: "pointer" }}
+          >
+            {loading ? "Signing In..." : "Sign In"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-
-// --- WRAPPER COMPONENT FOR FULL-SCREEN LAYOUT AND NAVIGATION ---
+// --- WRAPPER COMPONENT FOR FULL-SCREEN LAYOUT AND EXTERNAL SETUP ---
 export default function SignInPage() {
-    // Function to load SweetAlert dynamically
-    const loadSweetAlert = () => {
-        if (typeof window.swal === 'undefined' && !document.querySelector('#sweetalert-cdn')) {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/sweetalert/dist/sweetalert.min.js';
-            script.id = 'sweetalert-cdn';
-            document.body.appendChild(script);
-        }
-    };
+  // Function to load SweetAlert dynamically
+  const loadSweetAlert = () => {
+    if (
+      typeof window.swal === "undefined" &&
+      !document.querySelector("#sweetalert-cdn")
+    ) {
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
+      script.id = "sweetalert-cdn";
+      document.body.appendChild(script);
+    }
+  };
 
-    useEffect(() => {
-        loadSweetAlert();
-    }, []);
+  useEffect(() => {
+    loadSweetAlert();
+  }, []);
 
-    // Navigation Logic: Simulates navigation to external paths
-    const navigate = (path) => {
-        const url = `/${path}`;
-        console.log(`Simulating navigation to external path: ${url}`);
-        
-        if (typeof window !== 'undefined') {
-            window.location.assign(url);
-        }
-    };
-
-    // Full-screen container with fixed height requirement applied (using h-[90vh] to match SignUpPage's container feel)
-    return (
-        <div className="min-h-screen h-screen bg-gray-100 flex items-center justify-center p-4">
-            <div className="h-[90vh] w-full max-w-lg">
-                <SignInFormContent navigate={navigate} />
-            </div>
-        </div>
-    );
+  // Full-screen container
+  return (
+    <div className="min-h-screen h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="h-[90vh] w-full max-w-lg">
+        <SignInFormContent simulateNavigation={simulateNavigation} />
+      </div>
+    </div>
+  );
 }
