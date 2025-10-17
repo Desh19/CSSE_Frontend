@@ -22,7 +22,6 @@ const QRCodeScanner = () => {
   const pickupRequestId = location.state?.pickupRequestId;
 
   useEffect(() => {
-    // Log the pickup request ID to console
     if (pickupRequestId) {
       console.log("Pickup Request ID:", pickupRequestId);
     } else {
@@ -188,9 +187,8 @@ const QRCodeScanner = () => {
       await completePickupFunc(pickupRequestId);
       console.log(`Pickup ${pickupRequestId} marked as complete successfully`);
       
-      // Show success message and navigate back
       alert("Pickup completed successfully!");
-      navigate(-1); // Go back to pickup requests list
+      navigate(-1);
     } catch (err) {
       console.error(`Error completing pickup ${pickupRequestId}:`, err);
       setError(
@@ -383,7 +381,6 @@ const QRCodeScanner = () => {
               ) : (
                 <div className="space-y-4">
                   {Object.entries(scannedData)
-                    // 👈 This is the line to remove the User ID from the display
                     .filter(([key]) => key !== "_id") 
                     .map(([key, value]) => (
                       <div

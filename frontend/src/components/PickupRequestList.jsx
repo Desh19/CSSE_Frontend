@@ -2,14 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { getResidentRequestsFunc } from '../services/api';
 
-
-/**
- * Helper function to format ISO date strings into a readable format.
- */
 const formatDateTime = (isoString) => {
     if (!isoString) return 'N/A';
     try {
-        // Use toLocaleString for a detailed, locale-aware display
         return new Date(isoString).toLocaleString('en-US', {
             year: 'numeric',
             month: 'short',
@@ -22,11 +17,7 @@ const formatDateTime = (isoString) => {
     }
 };
 
-/**
- * Helper component to render the status badge with appropriate styling.
- */
 const StatusBadge = ({ status }) => {
-    // Map status to Tailwind classes for color and border
     const statusColor = {
         COMPLETED: 'bg-green-100 text-green-800 border-green-300',
         PENDING: 'bg-yellow-100 text-yellow-800 border-yellow-300',
@@ -45,7 +36,6 @@ const StatusBadge = ({ status }) => {
     );
 };
 
-// A simple loading spinner SVG
 const LoadingSpinner = () => (
     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -54,19 +44,16 @@ const LoadingSpinner = () => (
 );
 
 
-// --- MAIN COMPONENT: Pickup Schedule Table ---
 const PickupScheduleTable = () => {
     const [pickupRequests, setPickupRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch data using the real API function
     const fetchResidentRequests = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await getResidentRequestsFunc();
-            // Assuming response.data is an array of requests
             setPickupRequests(response.data);
         } catch (err) {
             console.error("Error fetching resident requests:", err);
@@ -80,7 +67,6 @@ const PickupScheduleTable = () => {
         fetchResidentRequests();
     }, [fetchResidentRequests]);
 
-    // Render logic for Loading and Error states
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gray-50">

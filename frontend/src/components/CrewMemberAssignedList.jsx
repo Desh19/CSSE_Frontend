@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom"; // useNavigate is required for handleMarkAsComplete
+import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
-// Assuming the path to your API service functions is correct:
 import {getAssignedPickupsFunc , startPickupFunc} from "../services/api"; 
 
 
-// --- Utility Components (Unchanged) ---
 const StatusBadge = ({ status }) => {
   let classes = "px-3 py-1 text-xs font-semibold rounded-full";
   let displayStatus = status.replace('_', ' ');
@@ -29,20 +27,13 @@ const StatusBadge = ({ status }) => {
   return <span className={classes}>{displayStatus.toUpperCase()}</span>;
 };
 
-// A simple loading spinner SVG
 const LoadingSpinner = () => (
     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
     </svg>
 );
-// --- End Utility Components ---
 
-// --- New/Updated Location Component ---
-
-/**
- * Parses the location string and renders a clickable Google Maps link if GPS data is found.
- */
 const LocationDisplay = ({ locationString }) => {
   let locationDisplay = locationString || 'N/A';
   let gpsData = null;
