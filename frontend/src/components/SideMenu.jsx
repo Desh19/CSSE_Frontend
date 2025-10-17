@@ -23,9 +23,9 @@ const Sidebar = () => {
       <div className="flex items-center mb-8 cursor-pointer hover:bg-green-50 transition-colors duration-200 p-3"
       onClick={() => navigate("/Home")}>
         <div className="w-8 h-8 bg-green-200 rounded-full mr-2 flex items-center justify-center text-green-900 font-bold">
-          E
+         ♻️
         </div>
-        <span className="text-lg font-semibold text-gray-800">EcoCollect</span>
+        <span className="text-lg font-semibold text-gray-800">EcoWaste</span>
       </div>
 
       {/* Navigation Links */}

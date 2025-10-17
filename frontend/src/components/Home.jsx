@@ -6,11 +6,7 @@ import RegularWaste from '../assets/RegularWaste.png';
 import SpecialPickup from '../assets/SpecialPickup.png';
 import GarbageTruck from '../assets/GarbageTruck.png';
 
-// Placeholder Images (for sandbox environment compatibility)
-// const PlaceholderRecycling = 'https://placehold.co/400x300/10b981/ffffff?text=Recycling';
-// const PlaceholderRegularWaste = 'https://placehold.co/400x300/4f46e5/ffffff?text=Regular+Waste';
-// const PlaceholderSpecialPickup = 'https://placehold.co/400x300/6b7280/ffffff?text=Special+Pickup';
-// const PlaceholderGarbageTruck = 'https://placehold.co/300x200/ef4444/ffffff?text=Garbage+Truck';
+
 
 // Function to simulate navigation (used instead of useNavigate)
 const simulateNavigation = (path) => {
@@ -91,7 +87,7 @@ const Home = () => {
         <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800">Hello, {userName}!</h1>
             <p className="text-gray-500 mt-1 text-sm sm:text-base">
-                Welcome to your EcoCollect dashboard. Manage your waste services efficiently.
+                Welcome to your EcoWaste dashboard. Manage your waste services efficiently.
             </p>
          
         </div>
@@ -170,10 +166,7 @@ const Home = () => {
       <section className="flex flex-col md:flex-row justify-between items-start bg-white p-6 rounded-xl shadow-2xl border-t-4 border-green-500">
         <div className="flex-grow md:w-1/2">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
-          <h3 className="text-xl font-medium text-gray-700 mb-2">Last Pickup Scheduled</h3>
-          <p className="text-gray-500 mb-4">
-            Your special waste pickup for electronics is scheduled for **July 15th, 2025**.
-          </p>
+         
           <a
             href="/ActivityHistory"
             className="inline-flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition-colors"

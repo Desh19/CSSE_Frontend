@@ -59,10 +59,10 @@ const EcoCollectLandingPage = () => {
             <nav className="bg-white shadow-md sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
                     <div className="flex items-center space-x-2">
-                        <Leaf className="h-8 w-8 text-indigo-600" />
-                        <span className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                            EcoCollect
-                        </span>
+                        
+                        {/* <span className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                            EcoWaste
+                        </span> */}
                     </div>
                     {/* Mock Navigation Links */}
                     <div className="hidden md:flex space-x-6 text-gray-600 font-medium">
