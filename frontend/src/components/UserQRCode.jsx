@@ -1,7 +1,6 @@
 import React, { useRef, useMemo, useCallback } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 
-// Utility function to safely get and process user data
 const getQRCodeData = () => {
   const userString = localStorage.getItem('user');
   let userData = {};
@@ -77,7 +76,6 @@ const UserQRCode = () => {
         Your Personal QR Code
       </h3>
       
-      {/* Container for the QR Code - with white background and subtle shadow */}
       <div 
         ref={qrRef} 
         className="
