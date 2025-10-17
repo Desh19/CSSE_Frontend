@@ -43,6 +43,8 @@ export const getAllCrewMembers = () => api.get("/admin/crew-members");
 
 // --- Resident ---
 export const schedulePickupFunc = (data) => api.post("/resident/requests", data);
+export const getResidentRequestsFunc = () => api.get("/resident/fetchPickups");
+
 // Add more resident endpoints as needed
 
 // --- IoT (if needed) ---
