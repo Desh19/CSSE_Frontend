@@ -29,28 +29,24 @@ const FormInput = ({ label, type = 'text', name, required = true, isVisible = tr
 };
 
 
-// --- MAIN SIGN UP COMPONENT ---
 const SignUpFormContent = () => {
-    // State for the selected role: 'Resident' or 'CollectionCrewMember'
     const [role, setRole] = useState('Resident'); 
     const navigate = useNavigate();
 
-    // Combined state for all possible form fields
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
-        address: '', // Shared Required field (District/City equivalent)
-        employeeId: '', // Crew specific
-        contactNumber: '', // Crew specific (Note: This was required in your initial code, making it required here)
-        vehicle: '', // Crew specific (optional)
+        address: '',
+        employeeId: '',
+        contactNumber: '', 
+        vehicle: '', 
     });
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
-    // Clear role-specific fields when the role changes to prevent sending old data
     const handleRoleChange = (newRole) => {
         setRole(newRole);
         setFormData(prevData => ({
@@ -78,12 +74,10 @@ const SignUpFormContent = () => {
             let endpoint = '';
             let payload = {};
             
-            // Basic Client-side Validation for required fields
             if (!formData.name || !formData.email || !formData.password || !formData.address) {
                 throw new Error('Please fill out all mandatory fields: Name, Email, Password, and Address.');
             }
 
-            // 1. Determine API Endpoint and Build Payload based on the current role
             if (role === 'Resident') {
                 endpoint = RESIDENT_API;
                 payload = {
@@ -113,11 +107,9 @@ const SignUpFormContent = () => {
                 throw new Error('Invalid role selected.');
             }
 
-            // 2. Send API Request
-            // NOTE: In a real environment, you might need to handle CORS or authentication headers
+            
             const { data } = await axios.post(endpoint, payload);
 
-            // Use swal (SweetAlert) for success message as requested
             if (typeof window.swal === 'function') {
                  window.swal({
                     title: "Registration Successful!",
@@ -125,16 +117,13 @@ const SignUpFormContent = () => {
                     icon: "success",
                     button: "Proceed to Login",
                 }).then(() => {
-                    // Navigate to /signin page path
                     navigate('signin'); 
                 });
             } else {
-                // Fallback message
                 setMessage(`${role} registration successful! Welcome, ${data.name}. You can now log in.`);
                 navigate('signin');
             }
             
-            // Clear all fields after successful submission
             setFormData({
                 name: '', email: '', password: '', address: '', employeeId: '', contactNumber: '', vehicle: ''
             });
@@ -142,7 +131,6 @@ const SignUpFormContent = () => {
         } catch (err) {
             const errMsg = err.response?.data?.message || err.message || 'An unexpected error occurred.';
             setError(errMsg);
-            // Use swal for error message as requested
             if (typeof window.swal === 'function') {
                 window.swal("Registration Failed", errMsg, "error");
             }
@@ -153,16 +141,13 @@ const SignUpFormContent = () => {
     };
 
 
-    // --- Render Component ---
     return (
-        // Added flex flex-col to enable scrolling for content area and fixed footer
         <div className="w-full max-w-2xl bg-white rounded-xl shadow-2xl h-full flex flex-col">
             <div className="p-8 pb-0">
                 <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
                     Sign Up
                 </h2>
 
-                {/* Role Selection Tabs */}
                 <div className="flex justify-center mb-6 border-b border-gray-200">
                     <button
                         type="button"
@@ -191,7 +176,6 @@ const SignUpFormContent = () => {
                 </div>
             </div>
 
-            {/* Status Messages (outside of form for consistent layout) */}
             {(error || message) && (
                 <div className="px-8 pt-0 pb-4">
                     {error && (
@@ -207,11 +191,8 @@ const SignUpFormContent = () => {
                 </div>
             )}
 
-
-            {/* Dynamic Form Content (Scrollable Area) */}
             <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto px-8">
                 
-                {/* 1. Base Fields (Required for ALL Users) - Grid Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
                     <FormInput label="Full Name" name="name" value={formData.name} onChange={handleChange} />
                     <FormInput label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} />
@@ -226,7 +207,6 @@ const SignUpFormContent = () => {
                     />
                 </div>
                 
-                {/* 2. Conditional Crew Fields - Single Column Layout */}
                 {role === 'CollectionCrewMember' && (
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-4 border-t pt-4 border-gray-200">
                         <FormInput 
@@ -242,7 +222,7 @@ const SignUpFormContent = () => {
                             name="contactNumber" 
                             value={formData.contactNumber} 
                             onChange={handleChange}
-                            required={true} // Marked as required based on your original logic
+                            required={true} 
                             placeholder="e.g., 07x xxx xxxx"
                         />
                         <div className="col-span-full">
@@ -257,15 +237,11 @@ const SignUpFormContent = () => {
                         </div>
                     </div>
                 )}
-                {/* Add padding at the bottom for aesthetic spacing before the fixed footer */}
                 <div className="h-4"></div>
             </form>
-            
-            {/* 3. Action Buttons (Fixed Footer Area) */}
-            {/* This div is outside the scrollable form and sits at the bottom of the flex container */}
+           
             <div className="px-8 pt-4 pb-8 bg-white border-t border-gray-100">
                 <div className="flex justify-between items-center">
-                    {/* Back Button */}
                     <button
                         type="button"
                         onClick={() => navigate('/')}
@@ -295,10 +271,7 @@ const SignUpFormContent = () => {
     );
 };
 
-
-// --- WRAPPER COMPONENT FOR FULL-SCREEN LAYOUT AND NAVIGATION ---
 export default function SignUpPage() {
-    // Function to load SweetAlert dynamically
     const loadSweetAlert = () => {
         if (typeof window.swal === 'undefined' && !document.querySelector('#sweetalert-cdn')) {
             const script = document.createElement('script');
@@ -312,18 +285,15 @@ export default function SignUpPage() {
         loadSweetAlert();
     }, []);
 
-    // 1. Updated Navigation Logic: Navigates to the specified path/route
     const navigate = (path) => {
         const url = `/${path}`;
         console.log(`Simulating navigation to external path: ${url}`);
         
-        // This simulates a full page redirect to the specified route
         if (typeof window !== 'undefined') {
             window.location.assign(url);
         }
     };
 
-    // Full-screen container with fixed height requirement applied (h-screen and h-[90vh] on content)
     return (
         <div className="min-h-screen h-screen bg-gray-100 flex items-center justify-center p-4">
             <SignUpFormContent navigate={navigate} />

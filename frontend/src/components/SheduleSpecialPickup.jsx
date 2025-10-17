@@ -1,5 +1,3 @@
-// SpecialPickupForm.jsx
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,28 +14,24 @@ const SpecialPickupForm = () => {
     billingAddress: "",
   });
 
-  const SERVICE_FEE = "1,200.00"; // Example fee
+  const SERVICE_FEE = "1,200.00";
   const wasteTypes = [
     "Bulky and household items",
     "Electronic and e-waste",
     "Other recyclables",
   ];
 
-  // 💡 NEW HANDLER FOR DASHBOARD NAVIGATION
   const handleDashboardNavigation = () => {
-    navigate("/Home"); // Navigates to the root path
+    navigate("/Home");
   };
 
-  // Handler for all input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // --- Step 1 Navigation ---
   const handleNext = (e) => {
     e.preventDefault();
-    // Basic validation for Step 1
     if (!formData.wasteType || !formData.scheduleDate) {
       alert("Please select a Waste Type and Schedule Date.");
       return;
@@ -45,18 +39,11 @@ const SpecialPickupForm = () => {
     setCurrentStep(2);
   };
 
-  // --- Step 2 Navigation/Submission ---
   const handleSave = (e) => {
     e.preventDefault();
-    // Final Submission Logic
     console.log("Final Form Data:", formData);
     alert("Special Pickup Scheduled and Payment Saved!");
-    // Optional: Reset or navigate after success
   };
-
-  // ------------------------------------
-  // --- Step 1: Schedule Details UI ---
-  // ------------------------------------
   const renderStep1 = () => (
     <form onSubmit={handleNext}>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -86,7 +73,6 @@ const SpecialPickupForm = () => {
         </select>
       </div>
 
-      {/* Schedule Date */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Schedule Date
@@ -101,7 +87,6 @@ const SpecialPickupForm = () => {
         />
       </div>
 
-      {/* Description */}
       <div className="mb-8">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Description
@@ -116,12 +101,10 @@ const SpecialPickupForm = () => {
         ></textarea>
       </div>
 
-      {/* Navigation Button */}
       <div className="flex justify-between mt-15">
-        {/* THIS IS THE BUTTON YOU PROVIDED! It navigates to the Dashboard on click */}
         <button
           type="button"
-          onClick={handleDashboardNavigation} // 💡 Calls navigate('/')
+          onClick={handleDashboardNavigation}
           className="px-6 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
         >
           Back to the Dashboard
@@ -135,15 +118,10 @@ const SpecialPickupForm = () => {
       </div>
     </form>
   );
-
-  // ---------------------------------
-  // --- Step 2: Payment Details UI ---
-  // ---------------------------------
   const renderStep2 = () => (
     <form onSubmit={handleSave}>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Payment</h2>
 
-      {/* Service Fee */}
       <div className="mb-6 text-lg font-medium text-gray-800">
         Special pickup Service:{" "}
         <span className="text-blue-600">Rs. {SERVICE_FEE}</span>
@@ -165,7 +143,6 @@ const SpecialPickupForm = () => {
         />
       </div>
 
-      {/* Expiry Date and CVC */}
       <div className="flex space-x-4 mb-6">
         <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -212,11 +189,10 @@ const SpecialPickupForm = () => {
         ></textarea>
       </div>
 
-      {/* Navigation Buttons */}
       <div className="flex justify-between mt-6">
         <button
           type="button"
-          onClick={() => setCurrentStep(1)} // Go back to Step 1
+          onClick={() => setCurrentStep(1)}
           className="px-6 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
         >
           Back
@@ -231,21 +207,13 @@ const SpecialPickupForm = () => {
     </form>
   );
 
-  // --------------------------------
-  // --- Main Render Function ---
-  // --------------------------------
   return (
-    // 💡 REMOVED 'justify-center items-center' and 'max-w-xl'
-    // This wrapper now fills its parent container (e.g., the Main Content Area in your App.jsx)
     <div className="p-8 bg-gray-50 flex-1 min-h-screen">
-      {/* 💡 The internal form container now uses w-full and has horizontal padding */}
       <div className="w-full bg-white p-6 md:p-10 rounded-xl shadow-2xl">
-        {/* Step Indicator */}
         <div className="text-sm font-semibold text-gray-500 mb-8">
           Step {currentStep} of 2
         </div>
 
-        {/* Conditional rendering of steps */}
         {currentStep === 1 ? renderStep1() : renderStep2()}
       </div>
     </div>
