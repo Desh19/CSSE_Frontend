@@ -1,8 +1,6 @@
 import React from 'react';
 import { Leaf, Truck, Users, MapPin, Mail, Phone, Clock } from 'lucide-react';
 
-// --- Helper Components for UI Consistency ---
-
 const IconCard = ({ icon: Icon, title, description }) => (
     <div className="flex flex-col items-start p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 border border-gray-100">
         <div className="p-3 mb-4 rounded-full bg-indigo-100 text-indigo-600">
@@ -16,7 +14,6 @@ const IconCard = ({ icon: Icon, title, description }) => (
 // --- MAIN COMPONENT ---
 
 const EcoCollectLandingPage = () => {
-    // Content data structured for easy modification
     const mission = {
         aim: "To simplify and revolutionize the collection of specialized and bulk waste, making communities cleaner and greener.",
         description: "EcoCollect connects residents needing pickup services (like bulk trash or HAZMAT) directly with dedicated collection crews. We streamline scheduling, assignment, and tracking through a digital platform, ensuring efficient, documented, and timely environmental service delivery.",
@@ -55,16 +52,12 @@ const EcoCollectLandingPage = () => {
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
             
-            {/* 1. Header/Navigation */}
             <nav className="bg-white shadow-md sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
                     <div className="flex items-center space-x-2">
                         
-                        {/* <span className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                            EcoWaste
-                        </span> */}
                     </div>
-                    {/* Mock Navigation Links */}
+
                     <div className="hidden md:flex space-x-6 text-gray-600 font-medium">
                         <a href="#mission" className="hover:text-indigo-600 transition">Mission</a>
                         <a href="#services" className="hover:text-indigo-600 transition">Services</a>
@@ -73,7 +66,6 @@ const EcoCollectLandingPage = () => {
                 </div>
             </nav>
 
-            {/* 2. Hero Section */}
             <section className="bg-gradient-to-br from-indigo-500 to-indigo-700 py-20 md:py-32 text-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h1 className="text-4xl sm:text-6xl font-extrabold mb-4 leading-tight">
@@ -87,10 +79,7 @@ const EcoCollectLandingPage = () => {
                     </button>
                 </div>
             </section>
-
-            {/* --- */}
             
-            {/* 3. Mission & Aim Section */}
             <section id="mission" className="py-16 md:py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
@@ -116,10 +105,6 @@ const EcoCollectLandingPage = () => {
                     </div>
                 </div>
             </section>
-
-            {/* --- */}
-
-            {/* 4. How It Works / Core Services Section */}
             <section id="services" className="py-16 md:py-24 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
@@ -142,7 +127,6 @@ const EcoCollectLandingPage = () => {
                         ))}
                     </div>
 
-                    {/* How It Helps / Benefits Grid */}
                     <div className="mt-16 pt-12 border-t border-gray-200">
                         <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                             Our Impact on the Community
@@ -158,10 +142,7 @@ const EcoCollectLandingPage = () => {
                     </div>
                 </div>
             </section>
-            
-            {/* --- */}
 
-            {/* 5. Contact Section */}
             <section id="contact" className="py-16 md:py-24 bg-indigo-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
@@ -174,7 +155,7 @@ const EcoCollectLandingPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                        {/* Contact Info (Column 1) */}
+                       
                         <div className="space-y-6 bg-white p-8 rounded-xl shadow-lg h-full">
                             <h3 className="text-xl font-bold text-gray-900 border-b pb-2 mb-4">Contact Details</h3>
                             <div className="flex items-center space-x-3">
@@ -191,7 +172,6 @@ const EcoCollectLandingPage = () => {
                             </div>
                         </div>
 
-                        {/* Mock Contact Form (Columns 2 & 3) */}
                         <div className="lg:col-span-2 bg-white p-8 rounded-xl shadow-lg">
                             <h3 className="text-xl font-bold text-gray-900 mb-6">Send Us a Message</h3>
                             <form className="space-y-4">
@@ -216,7 +196,6 @@ const EcoCollectLandingPage = () => {
                 </div>
             </section>
 
-            {/* 6. Footer */}
             <footer className="bg-gray-800 text-white py-6">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
                     <p>&copy; {new Date().getFullYear()} EcoCollect. All rights reserved. | Built for a Greener Tomorrow.</p>

@@ -1,10 +1,7 @@
-// LandingPage.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingPageBackground from '../assets/LandingPageBackground.png';
 
-// Component to handle the typing effect
 const AnimatedTitle = ({ text }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [index, setIndex] = useState(0);
@@ -14,17 +11,15 @@ const AnimatedTitle = ({ text }) => {
       const timeoutId = setTimeout(() => {
         setDisplayedText(prev => prev + text[index]);
         setIndex(index + 1);
-      }, 50); // Typing speed in milliseconds
+      }, 50);
 
       return () => clearTimeout(timeoutId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, text]);
 
   return (
     <h1 className="text-6xl md:text-8xl font-extrabold text-white text-center">
       {displayedText}
-      {/* Blinking cursor effect */}
       <span className="animate-pulse inline-block w-2 h-16 md:w-4 md:h-20 bg-green-400 ml-1 align-middle"></span>
     </h1>
   );
@@ -34,11 +29,9 @@ const AnimatedTitle = ({ text }) => {
 const LandingPage = () => {
   const navigate = useNavigate();
   
-  // Placeholder for the main title
   const mainTitle = "Smart Waste Management System.";
 
   return (
-    // Full screen container with background image and overlay
     <div className="relative h-screen w-screen overflow-hidden">
       
       {/* Background Image */}
@@ -59,11 +52,9 @@ const LandingPage = () => {
           EcoWaste
         </div>
 
-        {/* Sign In / Sign Up Buttons */}
         <nav className="space-x-4">
           <button 
             onClick={() => navigate('/SignIn')}
-            // FIX: Added reliable inline cursor style
             style={{ cursor: 'pointer' }}
             className="px-4 py-2 text-white font-medium rounded-lg transition-colors border border-transparent hover:border-white"
           >
@@ -71,7 +62,6 @@ const LandingPage = () => {
           </button>
           <button 
             onClick={() => navigate('/SignUp')}
-            // FIX: Added reliable inline cursor style
             style={{ cursor: 'pointer' }}
             className="px-4 py-2 bg-green-500 text-gray-900 font-bold rounded-lg shadow-md hover:bg-green-400 transition-colors"
           >
@@ -80,8 +70,6 @@ const LandingPage = () => {
         </nav>
       </header>
 
-      {/* Main Content: Centered Title with Animation */}
-      {/* Z-index here should be lower than header (z-10) */}
       <main className="relative z-10 flex flex-col items-center justify-center h-full -mt-20">
         <div className="p-4">
           <AnimatedTitle text={mainTitle} />
@@ -90,16 +78,6 @@ const LandingPage = () => {
             Innovating resource management for a greener tomorrow.
           </p>
           
-          {/* <div className="flex justify-center mt-12">
-             <button 
-                onClick={() => navigate('/SignIn')} // Assuming a dashboard route for logged-in users
-                // FIX: Added reliable inline cursor style
-                style={{ cursor: 'pointer' }}
-                className="px-8 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-xl hover:bg-blue-700 transition-all transform hover:scale-105"
-              >
-                Get Started
-              </button>
-          </div> */}
         </div>
       </main>
     </div>

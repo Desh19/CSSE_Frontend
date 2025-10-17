@@ -1,23 +1,17 @@
 import React from 'react';
-// NOTE: Removed non-resolvable image imports. The component will now exclusively use
-// the defined Placeholder Images to ensure successful compilation and rendering in the sandbox environment.
 import Recycling from '../assets/Recycling.png'; 
 import RegularWaste from '../assets/RegularWaste.png';
 import SpecialPickup from '../assets/SpecialPickup.png';
 import GarbageTruck from '../assets/GarbageTruck.png';
 
 
-
-// Function to simulate navigation (used instead of useNavigate)
 const simulateNavigation = (path) => {
     console.log(`Simulating navigation/redirect to: ${path}`);
     if (typeof window !== 'undefined') {
-        // Use window.location.href for simplicity in a multi-page environment
         window.location.href = path;
     }
 };
 
-// --- ServiceCard COMPONENT ---
 const ServiceCard = ({ title, description, imageUrl, imageAlt, linkTo }) => (
   <a 
     href={linkTo} 
@@ -30,11 +24,9 @@ const ServiceCard = ({ title, description, imageUrl, imageAlt, linkTo }) => (
     {/* Image/Visual Area */}
     <div className="h-48">
       <img
-        // We now rely purely on the passed imageUrl, which should be one of the placeholders
         src={imageUrl}
         alt={imageAlt}
         className="w-full h-full object-cover"
-        // Ensure onError uses a robust placeholder if even the provided URL fails
         onError={(e) => { e.target.onerror = null; e.target.src = PlaceholderSpecialPickup; }}
       />
     </div>
@@ -47,9 +39,7 @@ const ServiceCard = ({ title, description, imageUrl, imageAlt, linkTo }) => (
   </a>
 );
 
-// --- Home COMPONENT ---
 const Home = () => {
-  // --- USER DATA EXTRACTION AND ROLE CHECK ---
   const userString = localStorage.getItem('user');
   let userName = 'User';
   let userRole = null; // Default to null
@@ -57,24 +47,18 @@ const Home = () => {
   try {
     const userData = userString ? JSON.parse(userString) : {};
     userName = userData.name || 'Resident';
-    userRole = userData.role || null; // Capture the role
+    userRole = userData.role || null;
   } catch (e) {
     console.error("Error parsing user data:", e);
   }
 
-  // Check if the current user is a Resident
   const isResident = userRole === 'Resident';
 
-  // --- LOGOUT FUNCTIONALITY ---
   const handleLogout = () => {
-    // 1. Clear Local Storage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     
-    // 2. Clear Session Storage as well (good practice)
     sessionStorage.clear(); 
-
-    // 3. Navigate to the root path
     simulateNavigation('/');
   };
 
@@ -82,7 +66,6 @@ const Home = () => {
   return (
     <main className="flex-1 p-4 sm:p-8 overflow-y-auto bg-gray-50 min-h-screen">
       
-      {/* Header/Welcome Section with Logout Button */}
       <header className="mb-8 sm:mb-10 flex flex-col md:flex-row justify-between items-start border-b pb-4">
         <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800">Hello, {userName}!</h1>
@@ -92,10 +75,8 @@ const Home = () => {
          
         </div>
         
-        {/* Action Buttons: QR Code (Conditional) and Logout */}
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 p-4 mt-4 md:mt-0 bg-white rounded-xl shadow-lg border border-gray-100">
     
-            {/* Conditional Rendering: Get My QR Button (Resident Only) */}
             {isResident && (
                 <button
                     onClick={() => simulateNavigation('/genQr')}
@@ -115,7 +96,6 @@ const Home = () => {
                 </button>
             )}
 
-            {/* Logout Button (Always visible) */}
             <button
                 onClick={handleLogout}
                 className="flex items-center justify-center space-x-3 px-6 py-3 
@@ -162,7 +142,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Recent Activity Section */}
       <section className="flex flex-col md:flex-row justify-between items-start bg-white p-6 rounded-xl shadow-2xl border-t-4 border-green-500">
         <div className="flex-grow md:w-1/2">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
@@ -178,7 +157,6 @@ const Home = () => {
           </a>
         </div>
         
-        {/* Truck Image */}
         <div className="w-full md:w-1/3 mt-6 md:mt-0 ml-0 md:ml-6 rounded-xl overflow-hidden shadow-2xl border-4 border-gray-100">
           <img
             src={GarbageTruck}

@@ -52,7 +52,6 @@ const AdminPickupRequests = () => {
     // State to track loading status of individual update actions
     const [updateLoading, setUpdateLoading] = useState({});
 
-    // --- Data Fetching ---
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -62,7 +61,6 @@ const AdminPickupRequests = () => {
                 getAllCrewMembersFunc()
             ]);
 
-            // Assuming data is in response.data or response.data.requests/crew
             setRequests(requestsResponse.data.requests || requestsResponse.data || []);
             setCrewMembers(crewResponse.data.crewMembers || crewResponse.data || []);
         } catch (err) {
@@ -77,11 +75,9 @@ const AdminPickupRequests = () => {
         fetchData();
     }, [fetchData]);
 
-    // --- Local Change Handlers ---
     const handleStatusChange = (id, status) => {
         setStatusUpdate((prev) => ({ ...prev, [id]: status }));
         
-        // If status is changed to anything other than APPROVED, clear the crew assignment locally
         if (status !== "APPROVED") {
             setSelectedCrew((prev) => ({ ...prev, [id]: "" }));
         }
@@ -111,14 +107,13 @@ const AdminPickupRequests = () => {
 
         const payload = {
             status: finalStatus,
-            // Only send assignedCrewId if status is APPROVED, otherwise send null/undefined to clear it
+            
             assignedCrewId: finalStatus === "APPROVED" ? finalCrewId : undefined, 
         };
 
         try {
             await updatePickupRequestFunc(id, payload);
             
-            // Success: clear local states for this request and refresh the main data
             setStatusUpdate((prev) => { const newState = { ...prev }; delete newState[id]; return newState; });
             setSelectedCrew((prev) => { const newState = { ...prev }; delete newState[id]; return newState; });
             
