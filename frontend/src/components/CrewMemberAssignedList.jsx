@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom"; // useNavigate is required for handleMarkAsComplete
 import axios from "axios";
-import {getAssignedPickupsFunc , startPickupFunc} from "../services/api";
+// Assuming the path to your API service functions is correct:
+import {getAssignedPickupsFunc , startPickupFunc} from "../services/api"; 
 
 
-
-
+// --- Utility Components (Unchanged) ---
 const StatusBadge = ({ status }) => {
   let classes = "px-3 py-1 text-xs font-semibold rounded-full";
   let displayStatus = status.replace('_', ' ');
@@ -35,24 +36,91 @@ const LoadingSpinner = () => (
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
     </svg>
 );
+// --- End Utility Components ---
+
+// --- New/Updated Location Component ---
+
+/**
+ * Parses the location string and renders a clickable Google Maps link if GPS data is found.
+ */
+const LocationDisplay = ({ locationString }) => {
+  let locationDisplay = locationString || 'N/A';
+  let gpsData = null;
+
+  if (locationDisplay.startsWith('GPS: {')) {
+    try {
+      const jsonStr = locationDisplay.substring(5).trim();
+      gpsData = JSON.parse(jsonStr);
+      // Format the display string
+      locationDisplay = `Lat: ${gpsData.latitude.toFixed(4)}, Lon: ${gpsData.longitude.toFixed(4)}`;
+    } catch (e) {
+      // Fallback if parsing fails, use the raw string
+      gpsData = null;
+      locationDisplay = locationString;
+    }
+  }
+
+  // Google Maps URL format for latitude,longitude
+  const mapUrl = gpsData 
+    ? `https://www.google.com/maps/search/?api=1&query=${gpsData.latitude},${gpsData.longitude}` 
+    : null;
+
+  if (mapUrl) {
+    return (
+      <a 
+        href={mapUrl} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:text-blue-800 transition duration-150 flex items-center group"
+      >
+        <span className="bg-blue-100 p-1 rounded text-xs font-mono group-hover:underline">
+          {locationDisplay}
+        </span>
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className="ml-1 w-4 h-4 text-red-500 group-hover:text-red-600"
+        >
+          <path d="M12 22s-8-4.5-8-10C4 5.5 7.5 2 12 2s8 3.5 8 10c0 5.5-8 10-8 10z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+      </a>
+    );
+  }
+
+  // Display raw data or 'N/A' if GPS data is invalid or missing
+  return (
+    <span className="bg-gray-100 p-1 rounded text-xs font-mono text-gray-700">
+      {locationDisplay}
+    </span>
+  );
+};
+// --- End Location Component ---
+
 
 const CrewPickupRequests = () => {
+  const navigate = useNavigate();
   const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState({});
 
-  // 1. Fetch Assigned Pickups using real API function
+  // 1. Fetch Assigned Pickups
   const fetchPickups = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Use the actual getAssignedPickupsFunc to fetch data
       const response = await getAssignedPickupsFunc();
       setPickups(response.data);
     } catch (err) {
       console.error("Error fetching assigned pickups:", err);
-      // Provide user-friendly feedback on connection issues
       setError("Failed to load assigned requests. Please check your network connection and server status.");
     } finally {
       setLoading(false);
@@ -63,21 +131,17 @@ const CrewPickupRequests = () => {
     fetchPickups();
   }, [fetchPickups]);
 
-  // 2. Handle Status Update to IN_PROGRESS using real API function
+  // 2. Handle Status Update to IN_PROGRESS
   const handleStartPickup = async (id) => {
     setActionLoading((prev) => ({ ...prev, [id]: true }));
 
     try {
-      // Use the actual startPickupFunc to send the update
       await startPickupFunc(id);
-
-      // On successful server update, re-fetch the entire list to reflect the new status
-      await fetchPickups();
+      await fetchPickups(); 
 
     } catch (err) {
       console.error(`Error starting pickup ${id}:`, err);
-      // Replacing 'alert' with console.warn as per environment rules
-      console.warn(`Failed to start pickup ${id}. The server may have rejected the request. Check console for details.`, err);
+      console.warn(`Failed to start pickup ${id}. Check console for details.`, err);
     } finally {
       setActionLoading((prev) => {
         const newState = { ...prev };
@@ -85,6 +149,12 @@ const CrewPickupRequests = () => {
         return newState;
       });
     }
+  };
+
+  // 3. Handle Mark As Complete - Navigate to QR page with pickup ID
+  const handleMarkAsComplete = (id) => {
+    // Navigates to the /qr route, passing the pickup ID in the state object.
+    navigate(`/qr`, { state: { pickupRequestId: id } }); 
   };
 
   if (loading) {
@@ -124,40 +194,27 @@ const CrewPickupRequests = () => {
         <table className="min-w-full table-auto bg-white divide-y divide-gray-200">
           <thead>
             <tr className="bg-indigo-700 text-left text-xs font-bold text-white uppercase tracking-wider">
-              {/* Updated Column Headers */}
               <th className="py-3 px-4 rounded-tl-xl">Type</th>
               <th className="py-3 px-4">Description</th>
               <th className="py-3 px-4">Scheduled Date</th>
               <th className="py-3 px-4">Resident</th>
               <th className="py-3 px-4">Location (GPS)</th>
               <th className="py-3 px-4 text-center">Status</th>
-              <th className="py-3 px-4 rounded-tr-xl text-center">Actions</th>
+              <th className="py-3 px-4 text-center">Actions</th>
+              <th className="py-3 px-4 rounded-tr-xl text-center">Mark As Complete</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {pickups.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-gray-500 text-lg font-medium">
+                <td colSpan={8} className="text-center py-12 text-gray-500 text-lg font-medium">
                   🎉 All clear! No active pickups assigned to you.
                 </td>
               </tr>
             ) : (
               pickups.map((req) => {
                 const isActionLoading = actionLoading[req._id];
-                // Handle potential JSON string in location field
-                let locationDisplay = req.location || 'N/A';
-                if (locationDisplay.startsWith('GPS: {')) {
-                    try {
-                        // Extract JSON string part
-                        const jsonStr = locationDisplay.substring(5).trim();
-                        const gpsData = JSON.parse(jsonStr);
-                        locationDisplay = `Lat: ${gpsData.latitude.toFixed(4)}, Lon: ${gpsData.longitude.toFixed(4)}`;
-                    } catch (e) {
-                        // Fallback if parsing fails
-                        locationDisplay = req.location; 
-                    }
-                }
-
+                
                 return (
                   <tr key={req._id} className="hover:bg-indigo-50 transition duration-150 ease-in-out">
                     
@@ -185,9 +242,9 @@ const CrewPickupRequests = () => {
                       <div className="text-xs text-gray-500 truncate">{req.resident?.email || 'N/A'}</div>
                     </td>
 
-                    {/* Location */}
+                    {/* Location (UPDATED) */}
                     <td className="py-3 px-4 text-sm text-gray-700">
-                      <span className="bg-gray-100 p-1 rounded text-xs font-mono">{locationDisplay}</span>
+                      <LocationDisplay locationString={req.location} />
                     </td>
 
                     {/* Status */}
@@ -195,7 +252,7 @@ const CrewPickupRequests = () => {
                       <StatusBadge status={req.status} />
                     </td>
 
-                    {/* Actions */}
+                    {/* Actions (Start Pickup) */}
                     <td className="py-3 px-4 text-center">
                       <div className="flex justify-center">
                         {req.status === "APPROVED" && (
@@ -225,6 +282,27 @@ const CrewPickupRequests = () => {
                         )}
                       </div>
                     </td>
+
+                    {/* Mark As Complete */}
+                    <td className="py-3 px-4 text-center">
+                      <div className="flex justify-center">
+                        {req.status === "IN_PROGRESS" && (
+                          <button
+                            className="flex items-center justify-center bg-green-600 text-white rounded-lg px-4 py-2 text-sm font-semibold shadow-md hover:bg-green-700 transition duration-200"
+                            onClick={() => handleMarkAsComplete(req._id)}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Complete
+                          </button>
+                        )}
+                        {req.status === "APPROVED" && (
+                            <span className="text-gray-400 text-xs italic">Start pickup first</span>
+                        )}
+                        {(req.status === "COLLECTED" || req.status === "REJECTED") && (
+                            <span className="text-gray-400 text-xs italic">Completed</span>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 );
               })
@@ -237,10 +315,3 @@ const CrewPickupRequests = () => {
 };
 
 export default CrewPickupRequests;
-
-
-
-
-
-
-

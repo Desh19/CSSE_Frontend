@@ -21,6 +21,7 @@ api.interceptors.request.use((config) => {
 });
 
 // --- Auth ---
+
 export const loginFunc = (data) => api.post("/auth/login", data);
 export const registerResidentFunc = (data) => api.post("/auth/register", data);
 export const registerAdminFunc = (data) => api.post("/auth/register-admin", data);
