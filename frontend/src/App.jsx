@@ -15,7 +15,7 @@ import CrewMemberAssignedList from './components/CrewMemberAssignedList.jsx';
 import QrScanner from './components/QrScanner.jsx';
 import UserQRCode from './components/UserQRCode.jsx';
 import SchedulePickup from './components/SchedulePickup.jsx';
-
+import EcoCollectLandingPage from './components/Initial.jsx';
 // --- Auth Helper Functions ---
 const getAuthData = () => {
   const token = localStorage.getItem("token");
@@ -117,7 +117,7 @@ function App() {
         message: `Access denied. Your role (${userRole || 'N/A'}) is not authorized for this page.`, 
         type: "warning" 
       });
-      return <Navigate to="/Home" replace />; 
+      return <Navigate to="/Initial" replace />; 
     }
 
     return children;
@@ -145,8 +145,9 @@ function App() {
           <Route path="/SignUp" element={<SignUpPage />} />
           <Route path="/SignIn" element={<SignInPage />} />
           <Route path="/Sidebar" element={<Sidebar />} />
-          {/* <Route path="/Home" element={<Home />} /> */}
+          <Route path="/Home" element={<Home />} />
           <Route path="/SpecialPickup" element={<SpecialPickup />} />
+          <Route path="/initial" element={<EcoCollectLandingPage />} />
           
           {/* ---------------------------------------------------- */}
           {/* Protected Routes (Role-Based Access Control) */}
@@ -194,7 +195,7 @@ function App() {
           } />
           
           {/* Catch-all route for any undefined path */}
-          <Route path="*" element={<Home />} />
+          <Route path="*" element={<EcoCollectLandingPage />} />
         </Routes>
       </div>
     </div>

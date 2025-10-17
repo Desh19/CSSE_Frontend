@@ -90,7 +90,7 @@ const LandingPage = () => {
             Innovating resource management for a greener tomorrow.
           </p>
           
-          <div className="flex justify-center mt-12">
+          {/* <div className="flex justify-center mt-12">
              <button 
                 onClick={() => navigate('/SignIn')} // Assuming a dashboard route for logged-in users
                 // FIX: Added reliable inline cursor style
@@ -99,7 +99,7 @@ const LandingPage = () => {
               >
                 Get Started
               </button>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>
